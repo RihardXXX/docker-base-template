@@ -1,10 +1,30 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
+const { port, host, dbPath } = require('./config');
 
+// start server and listen port
+const startServer = () => {
+    app.listen(port, () => {
+        console.log(`start express api on port: ${port} and host: ${host}`);
+        console.log(`mongo dbPath: ${dbPath}`);
+    });
+}
+
+// start mongo db
+async function startMongo(dbPath='') {
+    if (!dbPath) {
+        throw new Error(`dbPath === [${dbPath}] is not path, error startMongo function`);
+    }
+    await mongoose.connect(dbPath);
+    // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+}
+
+// url paths for express server
 app.get('/test', (req, res) => {
     return res.send('test route response')
 });
 
-app.listen(3000, () => {
-    console.log('start express api')
-});
+startMongo(dbPath)
+    .then(() => startServer())
+    .catch(err => console.log(err.message));
