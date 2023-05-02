@@ -2,11 +2,12 @@
 - docker-compose.yml - единая точки входа для сервисов
 - dockerfile - создает образы линукса с установленными элементами читая инструкции
 - docker hub - сеть готовых образов готовых для скачивания
+- volumes - промежуточное хранение состояния, которая не стирается при пересборке контейнера, полезно для БД
 
 
 ## локальный запуск и отключение монги Mongo BD server start
 ```brew services start mongodb-community@6.0```
-# Mongo BD server stop
+## Mongo BD server stop
 ```brew services stop mongodb-community@6.0```
 ```kill <mongod process ID>```
 ```kill -2 <mongod process ID>```
@@ -15,10 +16,13 @@
 ## порядок запуска сервисов
 - ```sudo docker-compose build``` сборка образов контейнеров
 - ```docker compose up``` запуск контейнеров
-- ```sudo docker compose up --build``` одновременно билдим и запускаем контейнеры
+- ```sudo docker compose up --build``` одновременно билдим и запускаем контейнеры (для прода команда)
+- ```sudo docker compose -f docker-compose.yml -f docker-compose.develop.yml up --build ``` запускаем в дев режиме переписывая с прод режима поля (для дев режима команда)
 - ```docker ps --format "ID:({{.ID}}), NAME:({{.Names}}), IMAGE: ({{.Image}})"``` просмотр образов
 - ```docker images | grep node``` с фильтрацией
 - ```docker logs <name service>``` чтобы посмотреть логи конкретного сервиса
+- ```docker volume ls``` просмотр volumes
+- ```docker exec -it <идентификатор контейнера> bash``` - войти в запущенный контейнер
 
 ## работа над ошибками
 // =====
