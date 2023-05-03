@@ -17,6 +17,7 @@
 - ```sudo docker-compose build``` сборка образов контейнеров
 - ```docker compose up``` запуск контейнеров
 - ```sudo docker compose up --build``` одновременно билдим и запускаем контейнеры (для прода команда)
+- ```sudo docker compose up --build --remove-orphans``` билд и запуск контейнеров удаляя переименованные
 - ```sudo docker compose -f docker-compose.yml -f docker-compose.develop.yml up --build ``` запускаем в дев режиме переписывая с прод режима поля (для дев режима команда)
 - ```docker ps --format "ID:({{.ID}}), NAME:({{.Names}}), IMAGE: ({{.Image}})"``` просмотр образов
 - ```docker images | grep node``` с фильтрацией

@@ -6,6 +6,8 @@ services:
   # сервис который работает с экспрессом
   api:
     build: ./api
+    # даем имя контейнера чтобы при запуске найти именно его
+    container_name: docker-template-api
     # запуск сценария из package.json
     command: npm run start
     # всегда перезапускаем контейнер за исключением случаев когда остановлен вручную
@@ -18,18 +20,41 @@ services:
       - PORT=3000
       - HOST=http://docker-template.ru
       # образец с 'mongodb://127.0.0.1:27017/api' просто локалхос меняем на хос образа монги
-      - MONGO_URL=mongodb://db:27017/api
+      - MONGO_URL=mongodb://db_api:27017/api
     depends_on:
       # запускаем его после запуска образа базы данных монго
-      - db
+      - db_api
 
   # сервис который работает с базой данных берем готовый образ
-  db:
+  db_api:
     image: mongo:latest
+    # даем имя контейнера чтобы при запуске найти именно его
+    container_name: docker-template-db-api
     # выносим монгу за пределы контейнера, чтобы при пересборке БД не стиралась (симлинк ссылка)
     volumes:
-      - mongodb:/data/db
+      - mongodb_api:/data/db
+
+  auth:
+    build: ./auth
+    container_name: docker-template-auth
+    command: npm run start
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - HOST=http://docker-template.ru
+      - MONGO_URL=mongodb://db_auth:27017/auth
+    depends_on:
+      - db_auth
+
+  db_auth:
+    image: mongo:latest
+    container_name: docker-template-db_auth
+    volumes:
+      - mongodb_auth:/data/db
 
 volumes:
   # чтобы иметь доступ везде к волюму
-  mongodb:      
+  mongodb_api:      
+  mongodb_auth:      
