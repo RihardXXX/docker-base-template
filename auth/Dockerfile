@@ -1,5 +1,5 @@
 # указываем версию ноды сервисе
-FROM node:14.21.3-alpine
+FROM node:18.16-alpine
 
 # указываем рабочую папку она может быть любая
 WORKDIR /usr/src/app

@@ -3,6 +3,20 @@ version: "3"
 
 # имена сервисов контейнеров
 services:
+  # для фронтенда для тестов пока собираем дев сборку
+  frontend:
+    build: ./frontend
+    container_name: docker-template-frontend
+    command: npm run dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    # чтобы фронтенд не падал и сокеты обновления страницы отрабатывали
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend/src:/usr/src/app/src
+
   # сервис который работает с экспрессом
   api:
     build: ./api
@@ -14,10 +28,10 @@ services:
     restart: unless-stopped
     # слева наружный порт контейнера справа внутренний порт приложения
     ports:
-      - "3000:3000"
+      - "3001:3001"
     # переменные окружения которые мы можем пробросить внутри контейнера  
     environment:
-      - PORT=3000
+      - PORT=3001
       - HOST=http://docker-template.ru
       # образец с 'mongodb://127.0.0.1:27017/api' просто локалхос меняем на хос образа монги
       - MONGO_URL=mongodb://db_api:27017/api
@@ -40,9 +54,9 @@ services:
     command: npm run start
     restart: unless-stopped
     ports:
-      - "3001:3001"
+      - "3002:3002"
     environment:
-      - PORT=3001
+      - PORT=3002
       - HOST=http://docker-template.ru
       - MONGO_URL=mongodb://db_auth:27017/auth
     depends_on:

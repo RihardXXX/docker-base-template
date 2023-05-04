@@ -24,6 +24,7 @@
 - ```docker logs <name service>``` чтобы посмотреть логи конкретного сервиса
 - ```docker volume ls``` просмотр volumes
 - ```docker exec -it <идентификатор контейнера> bash``` - войти в запущенный контейнер
+- ```https://tproger.ru/translations/top-10-docker-commands/``` - основные докер команды
 
 ## работа над ошибками
 // =====
