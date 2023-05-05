@@ -3,6 +3,14 @@ version: '3'
 # только вновь записанные поля будут изменяться
 #  а остальное будет как в docker-compose.yml
 services:
+  frontend:
+    command: npm run dev
+    restart: unless-stopped
+    # чтобы фронтенд не падал и сокеты обновления страницы отрабатывали
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend/src:/usr/src/app/src
   api:
     command: npm run dev
     # эта папка будет не пересобираться заново

@@ -7,15 +7,10 @@ services:
   frontend:
     build: ./frontend
     container_name: docker-template-frontend
-    command: npm run dev
+    command: npm run start
     restart: unless-stopped
     ports:
       - "3000:3000"
-    # чтобы фронтенд не падал и сокеты обновления страницы отрабатывали
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./frontend/src:/usr/src/app/src
 
   # сервис который работает с экспрессом
   api:

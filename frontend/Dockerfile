@@ -12,3 +12,6 @@ RUN npm install
 
 # копируем все содержимое папки api (src and ...)  в корневую папку
 COPY . .
+
+# билдим для прода проект
+RUN npm run build
