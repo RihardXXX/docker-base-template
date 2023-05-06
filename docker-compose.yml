@@ -3,14 +3,29 @@ version: "3"
 
 # имена сервисов контейнеров
 services:
+  # создаем nginx сервер, который будет проксировать все запросы
+  nginx:
+    image: nginx:stable-alpine
+    container_name: docker-template-nginx
+    # стандартный порт работы айпи адресов
+    ports:
+      - "80:80"
+    #  делаем симлинк и не меняем состояние при пересборке
+    volumes:
+      - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
+    # запускаем после запуска фронта а то упадет при прокси на фронтенд  
+    depends_on:
+      - frontend
+
+
   # для фронтенда для тестов пока собираем дев сборку
   frontend:
     build: ./frontend
     container_name: docker-template-frontend
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    # ports:  
+    #   - "3000:3000"
 
   # сервис который работает с экспрессом
   api:
