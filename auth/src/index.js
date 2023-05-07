@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const { port, host, dbPath } = require('./config');
+const axios = require('axios'); // legacy way
+const { port, host, dbPath, apiUrl } = require('./config');
 
 
 // start server and listen port
@@ -25,6 +26,36 @@ async function startMongo(dbPath='') {
 // url paths for express server
 app.get('/test', (req, res) => {
     return res.send('test route response service auth')
+});
+
+// get user data
+app.get('/api/user', (req, res) => {
+    res.json({
+        id: 'xx123',
+        name: 'Roman',
+        age: 37,
+    })
+})
+
+// with api data
+app.get('/api/with-api-data', (req, res) => {
+    console.log('apiUrl', apiUrl);
+    axios.get(`${apiUrl}/likes`)
+        .then(function (response) {
+            // handle success
+            // console.log(response);
+            res.json({
+                authAndApi: response.data,
+                test: 'xxx'
+            });
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function () {
+            // always executed
+        });
 });
 
 startMongo(dbPath)

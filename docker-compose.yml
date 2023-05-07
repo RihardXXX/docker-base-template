@@ -16,6 +16,9 @@ services:
     # запускаем после запуска фронта а то упадет при прокси на фронтенд  
     depends_on:
       - frontend
+    # указываем имя нашей изолированной сети сервисов  
+    networks:
+      - docker-template  
 
 
   # для фронтенда для тестов пока собираем дев сборку
@@ -26,6 +29,8 @@ services:
     restart: unless-stopped
     # ports:  
     #   - "3000:3000"
+    networks:
+      - docker-template 
 
   # сервис который работает с экспрессом
   api:
@@ -45,9 +50,12 @@ services:
       - HOST=http://docker-template.ru
       # образец с 'mongodb://127.0.0.1:27017/api' просто локалхос меняем на хос образа монги
       - MONGO_URL=mongodb://db_api:27017/api
+      - AUTH_URL=http://auth:3002
     depends_on:
       # запускаем его после запуска образа базы данных монго
       - db_api
+    networks:
+      - docker-template 
 
   # сервис который работает с базой данных берем готовый образ
   db_api:
@@ -57,6 +65,8 @@ services:
     # выносим монгу за пределы контейнера, чтобы при пересборке БД не стиралась (симлинк ссылка)
     volumes:
       - mongodb_api:/data/db
+    networks:
+      - docker-template  
 
   auth:
     build: ./auth
@@ -69,16 +79,26 @@ services:
       - PORT=3002
       - HOST=http://docker-template.ru
       - MONGO_URL=mongodb://db_auth:27017/auth
+      - API_URL=http://api:3001
     depends_on:
       - db_auth
+    networks:
+      - docker-template  
 
   db_auth:
     image: mongo:latest
     container_name: docker-template-db_auth
     volumes:
       - mongodb_auth:/data/db
+    networks:
+      - docker-template
 
 volumes:
-  # чтобы иметь доступ везде к волюму
+  # чтобы иметь доступ везде к волюму они сохраняют состояние
   mongodb_api:      
-  mongodb_auth:      
+  mongodb_auth:    
+
+# создаем свою изолированную сеть
+networks:
+  docker-template:
+    driver: bridge
