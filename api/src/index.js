@@ -44,7 +44,7 @@ app.get('/test', (req, res) => {
 // get article if user
 app.get('/articles', (req, res) => {
     console.log('authUrl', authUrl);
-    axios.get(`${authUrl}/api/user`)
+    axios.get(`${authUrl}/user`)
         .then(function (response) {
             // handle success
             // console.log(response);

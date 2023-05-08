@@ -29,7 +29,7 @@ app.get('/test', (req, res) => {
 });
 
 // get user data
-app.get('/api/user', (req, res) => {
+app.get('/user', (req, res) => {
     res.json({
         id: 'xx123',
         name: 'Roman',
@@ -38,8 +38,8 @@ app.get('/api/user', (req, res) => {
 })
 
 // with api data
-app.get('/api/with-api-data', (req, res) => {
-    console.log('apiUrl', apiUrl);
+app.get('/with-api-data', (req, res) => {
+    // console.log('apiUrl', apiUrl);
     axios.get(`${apiUrl}/likes`)
         .then(function (response) {
             // handle success
