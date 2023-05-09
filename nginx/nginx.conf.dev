@@ -3,11 +3,17 @@ server {
     listen 80;
 
     # указываем хостинг для продакшина доменное имя
-    server_name docker-template.test;
+    server_name docker-template.local;
 
     # все все запросы идут frontend по роуту "/"
     location / {
         proxy_pass http://frontend:3000;
+
+        # настройки чтобы при дев режиме сокеты работали для фронта и страница изменялась 
+        # при изменении кода
+        # proxy_http_version 1.1;
+        # proxy_set_header Upgrade $http_upgrade;
+        # proxy_set_header Connection "upgrade";
     }
 
     # все все запросы идут api по роуту "/api"

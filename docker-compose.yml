@@ -13,9 +13,11 @@ services:
     #  делаем симлинк и не меняем состояние при пересборке
     volumes:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
-    # запускаем после запуска фронта а то упадет при прокси на фронтенд  
+    # запускаем после запуска фронта и бэков а то упадет при прокси на фронтенд  
     depends_on:
       - frontend
+      - api
+      - auth
     # указываем имя нашей изолированной сети сервисов  
     networks:
       - docker-template  
@@ -23,12 +25,12 @@ services:
 
   # для фронтенда для тестов пока собираем дев сборку
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: docker-template-frontend
     command: npm run start
     restart: unless-stopped
-    # ports:  
-    #   - "3000:3000"
     networks:
       - docker-template 
 
@@ -42,12 +44,11 @@ services:
     # всегда перезапускаем контейнер за исключением случаев когда остановлен вручную
     restart: unless-stopped
     # слева наружный порт контейнера справа внутренний порт приложения
-    ports:
-      - "3001:3001"
+    # ports:
+    #   - "3001:3001"
     # переменные окружения которые мы можем пробросить внутри контейнера  
     environment:
       - PORT=3001
-      - HOST=http://docker-template.ru
       # образец с 'mongodb://127.0.0.1:27017/api' просто локалхос меняем на хос образа монги
       - MONGO_URL=mongodb://db_api:27017/api
       - AUTH_URL=http://auth:3002
@@ -76,11 +77,8 @@ services:
     container_name: docker-template-auth
     command: npm run start
     restart: unless-stopped
-    ports:
-      - "3002:3002"
     environment:
       - PORT=3002
-      - HOST=http://docker-template.ru
       - MONGO_URL=mongodb://db_auth:27017/auth
       - API_URL=http://api:3001
     depends_on:

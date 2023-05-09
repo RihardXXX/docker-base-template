@@ -3,7 +3,13 @@ version: '3'
 # только вновь записанные поля будут изменяться
 #  а остальное будет как в docker-compose.yml
 services:
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/conf.d/nginx.conf
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     command: npm run dev
     restart: unless-stopped
     # чтобы фронтенд не падал и сокеты обновления страницы отрабатывали
