@@ -24,7 +24,6 @@ services:
       - docker-template  
 
 
-  # для фронтенда для тестов пока собираем дев сборку
   frontend:
     build: 
       context: ./frontend
