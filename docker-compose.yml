@@ -18,6 +18,7 @@ services:
       - frontend
       - api
       - auth
+      - mailer
     # указываем имя нашей изолированной сети сервисов  
     networks:
       - docker-template  
@@ -25,7 +26,7 @@ services:
 
   # для фронтенда для тестов пока собираем дев сборку
   frontend:
-    build:
+    build: 
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: docker-template-frontend
@@ -60,7 +61,7 @@ services:
 
   # сервис который работает с базой данных берем готовый образ
   db_api:
-    image: mongo:latest
+    image: mongo:6.0.5-jammy
     # даем имя контейнера чтобы при запуске найти именно его
     container_name: docker-template-db-api
     # прописав порты мы можем с компаса подключится во внутрь контейнера
@@ -81,23 +82,50 @@ services:
       - PORT=3002
       - MONGO_URL=mongodb://db_auth:27017/auth
       - API_URL=http://api:3001
+      - API_MAILER=http://mailer:3003
     depends_on:
       - db_auth
     networks:
       - docker-template  
 
   db_auth:
-    image: mongo:latest
+    image: mongo:6.0.5-jammy
     container_name: docker-template-db_auth
     volumes:
       - mongodb_auth:/data/db
     networks:
       - docker-template
 
+  mailer:
+    build: ./mailer
+    container_name: docker-template-mailer
+    command: npm run start
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003 
+      - LOGIN=${LOGIN_MAILER}
+      - PASSWORD=${PASSWORD_MAILER}
+      - MONGO_URL=mongodb://db_mailer:27017/mailer
+    depends_on:
+      - db_mailer
+    networks:
+      - docker-template    
+
+  db_mailer:
+    image: mongo:6.0.5-jammy
+    container_name: docker-template-db_mailer
+    volumes:
+      - mongodb_mailer:/data/db
+    networks:
+      - docker-template    
+
 volumes:
   # чтобы иметь доступ везде к волюму они сохраняют состояние
   mongodb_api:      
-  mongodb_auth:    
+  mongodb_auth:
+  mongodb_mailer:    
 
 # создаем свою изолированную сеть
 networks:
